@@ -143,7 +143,7 @@ var Body = (function (_super) {
         //两个动画的播放起始和结束帧
         this.idleAnimFrameEnd = 7;
         this.runAnimFrameEnd = 7;
-        this.mode = "Idle";
+        this.mode = "Run";
         var dog01 = new egret.Bitmap(RES.getRes("dog01_png"));
         var dog02 = new egret.Bitmap(RES.getRes("dog02_png"));
         var dog03 = new egret.Bitmap(RES.getRes("dog03_png"));
@@ -166,6 +166,10 @@ var Body = (function (_super) {
         this.once(egret.Event.ADDED_TO_STAGE, this.onLoad, this);
     }
     var d = __define,c=Body,p=c.prototype;
+    p.reset = function () {
+        this.frameNumber = 0;
+        this.isPlayFirst = true;
+    };
     p.onLoad = function (event) {
         this.addEventListener(egret.Event.ENTER_FRAME, this.onEnterFrame, this);
         this.timeOnEnterFrame = egret.getTimer();
@@ -188,14 +192,14 @@ var Body = (function (_super) {
             this.isPlayFirst = false;
             this.timeOnEnterFrame = egret.getTimer();
         }
-        else {
+        else if (this.mode == "Run") {
             if (this.frameNumber >= 1) {
-                this.removeChild(this.dogIdleArray[this.frameNumber - 1]);
+                this.removeChild(this.dogRunArray[this.frameNumber - 1]);
             }
             else if (this.frameNumber == 0 && this.isPlayFirst == false) {
-                this.removeChild(this.dogIdleArray[this.runAnimFrameEnd]);
+                this.removeChild(this.dogRunArray[this.runAnimFrameEnd]);
             }
-            this.addChild(this.dogIdleArray[this.frameNumber]);
+            this.addChild(this.dogRunArray[this.frameNumber]);
             this.frameNumber++;
             if (this.frameNumber == 8) {
                 this.frameNumber = 0;
@@ -211,9 +215,9 @@ var Player = (function (_super) {
     __extends(Player, _super);
     function Player() {
         _super.call(this);
-        var data = RES.getRes("dog_json");
-        var txtr = RES.getRes("dog_png");
-        var mcFactory = new egret.MovieClipDataFactory(data, txtr);
+        //var data = RES.getRes("dog_json");
+        //var txtr = RES.getRes("dog_png");
+        //var mcFactory: egret.MovieClipDataFactory = new egret.MovieClipDataFactory(data, txtr);
         //this._body = new egret.MovieClip(mcFactory.generateMovieClipData("dog"));
         this._body = new Body("Idle");
         this._modeText = new egret.TextField();
@@ -276,7 +280,8 @@ var PlayerMoveState = (function (_super) {
         this._player._modeText.text = "Now is moving";
         //var body = new Body("Move");
         //this._player._body.gotoAndPlay("run", -1);
-        //this._player._body = body;
+        this._player._body.reset();
+        this._player._body.mode = "Run";
         var tw = egret.Tween.get(this._player._body);
         tw.to({ x: this._targetX, y: this._targetY }, 500).call(this._player.idle, this._player);
     };
@@ -292,7 +297,8 @@ var PlayerIdleState = (function (_super) {
     p.onEnter = function () {
         //this._player._body.gotoAndPlay("idle");
         // var body = new Body("Idle");
-        //this._player._body = body;
+        this._player._body.reset();
+        this._player._body.mode = "Idle";
         this._player._modeText.text = "Now is idling";
     };
     return PlayerIdleState;

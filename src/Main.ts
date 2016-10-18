@@ -162,7 +162,7 @@ class Body extends egret.DisplayObjectContainer {
     //两个动画的播放起始和结束帧
     private idleAnimFrameEnd = 7;
     private runAnimFrameEnd = 7;
-    private mode = "Idle";
+    public mode = "Run";
 
     public constructor(mode: string) {
         super();
@@ -188,6 +188,10 @@ class Body extends egret.DisplayObjectContainer {
         this.once(egret.Event.ADDED_TO_STAGE, this.onLoad, this);
     }
 
+    public reset() {
+        this.frameNumber = 0;
+        this.isPlayFirst = true;
+    }
     private onLoad(event: egret.Event) {
         this.addEventListener(egret.Event.ENTER_FRAME, this.onEnterFrame, this);
         this.timeOnEnterFrame = egret.getTimer();
@@ -208,13 +212,13 @@ class Body extends egret.DisplayObjectContainer {
             }
             this.isPlayFirst = false;
             this.timeOnEnterFrame = egret.getTimer();
-        } else {
+        } else if (this.mode == "Run") {
             if (this.frameNumber >= 1) {
-                this.removeChild(this.dogIdleArray[this.frameNumber - 1]);
+                this.removeChild(this.dogRunArray[this.frameNumber - 1]);
             } else if (this.frameNumber == 0 && this.isPlayFirst == false) {
-                this.removeChild(this.dogIdleArray[this.runAnimFrameEnd]);
+                this.removeChild(this.dogRunArray[this.runAnimFrameEnd]);
             }
-            this.addChild(this.dogIdleArray[this.frameNumber]);
+            this.addChild(this.dogRunArray[this.frameNumber]);
             this.frameNumber++;
             if (this.frameNumber == 8) {
                 this.frameNumber = 0;
@@ -234,10 +238,9 @@ class Player extends egret.DisplayObjectContainer {
 
     constructor() {
         super();
-        var data = RES.getRes("dog_json");
-        var txtr = RES.getRes("dog_png");
-        var mcFactory: egret.MovieClipDataFactory = new egret.MovieClipDataFactory(data, txtr);
-
+        //var data = RES.getRes("dog_json");
+        //var txtr = RES.getRes("dog_png");
+        //var mcFactory: egret.MovieClipDataFactory = new egret.MovieClipDataFactory(data, txtr);
         //this._body = new egret.MovieClip(mcFactory.generateMovieClipData("dog"));
         this._body = new Body("Idle");
         this._modeText = new egret.TextField();
@@ -308,7 +311,8 @@ class PlayerMoveState extends PlayerState {
         this._player._modeText.text = "Now is moving";
         //var body = new Body("Move");
         //this._player._body.gotoAndPlay("run", -1);
-        //this._player._body = body;
+        this._player._body.reset();
+        this._player._body.mode = "Run";
         var tw = egret.Tween.get(this._player._body);
         tw.to({ x: this._targetX, y: this._targetY }, 500).call(this._player.idle, this._player);
     }
@@ -318,8 +322,9 @@ class PlayerIdleState extends PlayerState {
 
     onEnter() {
         //this._player._body.gotoAndPlay("idle");
-       // var body = new Body("Idle");
-        //this._player._body = body;
+        // var body = new Body("Idle");
+        this._player._body.reset();
+        this._player._body.mode = "Idle";
         this._player._modeText.text = "Now is idling";
     }
 }
