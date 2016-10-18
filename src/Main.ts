@@ -124,20 +124,9 @@ class Main extends egret.DisplayObjectContainer {
         sky.width = stageW;
         sky.height = stageH;
 
-        var body = new Body();
-        this.addChild(body);
-
-        var timer: egret.Timer = new egret.Timer(500);
-
-        //var dog02:egret.Bitmap = this.createBitmapByName("dog02_png");
-        //var dog02:egret.Bitmap = this.createBitmapByName("dog02_png");
-        //var dog02:egret.Bitmap = this.createBitmapByName("dog02_png");
-
-
-
         var player = new Player();
-        //player.idle();
-        // this.addChild(player);
+        player.idle();
+        this.addChild(player);
 
         sky.touchEnabled = true;
         sky.addEventListener(egret.TouchEvent.TOUCH_END, (e) => {
@@ -163,14 +152,19 @@ class Main extends egret.DisplayObjectContainer {
 }
 
 class Body extends egret.DisplayObjectContainer {
-    private dogArray: egret.Bitmap[];
+    private dogIdleArray: egret.Bitmap[];
+    private dogRunArray: egret.Bitmap[]
     private timeOnEnterFrame: number = 0;
     //目前所在的帧数，idle一共8帧，即帧数为0-7
     private frameNumber = 0;
     //播放次数
     private isPlayFirst = true;
+    //两个动画的播放起始和结束帧
+    private idleAnimFrameEnd = 7;
+    private runAnimFrameEnd = 7;
+    private mode = "Idle";
 
-    public constructor() {
+    public constructor(mode: string) {
         super();
         var dog01: egret.Bitmap = new egret.Bitmap(RES.getRes("dog01_png"));
         var dog02: egret.Bitmap = new egret.Bitmap(RES.getRes("dog02_png"));
@@ -180,7 +174,17 @@ class Body extends egret.DisplayObjectContainer {
         var dog06: egret.Bitmap = new egret.Bitmap(RES.getRes("dog06_png"));
         var dog07: egret.Bitmap = new egret.Bitmap(RES.getRes("dog07_png"));
         var dog08: egret.Bitmap = new egret.Bitmap(RES.getRes("dog08_png"));
-        this.dogArray = [dog01, dog02, dog03, dog04, dog05, dog06, dog07, dog08];
+        var dog09: egret.Bitmap = new egret.Bitmap(RES.getRes("dog09_png"));
+        var dog10: egret.Bitmap = new egret.Bitmap(RES.getRes("dog10_png"));
+        var dog11: egret.Bitmap = new egret.Bitmap(RES.getRes("dog11_png"));
+        var dog12: egret.Bitmap = new egret.Bitmap(RES.getRes("dog12_png"));
+        var dog13: egret.Bitmap = new egret.Bitmap(RES.getRes("dog13_png"));
+        var dog14: egret.Bitmap = new egret.Bitmap(RES.getRes("dog14_png"));
+        var dog15: egret.Bitmap = new egret.Bitmap(RES.getRes("dog15_png"));
+        var dog16: egret.Bitmap = new egret.Bitmap(RES.getRes("dog16_png"));
+        this.dogIdleArray = [dog01, dog02, dog03, dog04, dog05, dog06, dog07, dog08];
+        this.dogRunArray = [dog09, dog10, dog11, dog12, dog13, dog14, dog15, dog16];
+        this.mode = mode;
         this.once(egret.Event.ADDED_TO_STAGE, this.onLoad, this);
     }
 
@@ -189,26 +193,42 @@ class Body extends egret.DisplayObjectContainer {
         this.timeOnEnterFrame = egret.getTimer();
     }
     private onEnterFrame(e: egret.Event) {
-        if (this.frameNumber >= 1) {
-            this.removeChild(this.dogArray[this.frameNumber - 1]);
-        } else if (this.frameNumber == 0 && this.isPlayFirst == false) {
-            this.removeChild(this.dogArray[7]);
+        //帧数大于0的时候，才能移除前一帧
+        //当帧数为0的时候，移除的是最后一帧
+        if (this.mode == "Idle") {
+            if (this.frameNumber >= 1) {
+                this.removeChild(this.dogIdleArray[this.frameNumber - 1]);
+            } else if (this.frameNumber == 0 && this.isPlayFirst == false) {
+                this.removeChild(this.dogIdleArray[this.idleAnimFrameEnd]);
+            }
+            this.addChild(this.dogIdleArray[this.frameNumber]);
+            this.frameNumber++;
+            if (this.frameNumber == 8) {
+                this.frameNumber = 0;
+            }
+            this.isPlayFirst = false;
+            this.timeOnEnterFrame = egret.getTimer();
+        } else {
+            if (this.frameNumber >= 1) {
+                this.removeChild(this.dogIdleArray[this.frameNumber - 1]);
+            } else if (this.frameNumber == 0 && this.isPlayFirst == false) {
+                this.removeChild(this.dogIdleArray[this.runAnimFrameEnd]);
+            }
+            this.addChild(this.dogIdleArray[this.frameNumber]);
+            this.frameNumber++;
+            if (this.frameNumber == 8) {
+                this.frameNumber = 0;
+            }
+            this.isPlayFirst = false;
+            this.timeOnEnterFrame = egret.getTimer();
         }
-        this.addChild(this.dogArray[this.frameNumber]);
-        this.frameNumber++;
-        if (this.frameNumber == 8) {
-            this.frameNumber = 0;
-        }
-        this.isPlayFirst = false;
-
-        this.timeOnEnterFrame = egret.getTimer();
     }
-
 }
 
 class Player extends egret.DisplayObjectContainer {
     _modeText: egret.TextField;
-    _body: egret.MovieClip;
+    // _body: egret.MovieClip;
+    _body: Body;
     _stateMachine: StateMachine;
 
 
@@ -218,7 +238,8 @@ class Player extends egret.DisplayObjectContainer {
         var txtr = RES.getRes("dog_png");
         var mcFactory: egret.MovieClipDataFactory = new egret.MovieClipDataFactory(data, txtr);
 
-        this._body = new egret.MovieClip(mcFactory.generateMovieClipData("dog"));
+        //this._body = new egret.MovieClip(mcFactory.generateMovieClipData("dog"));
+        this._body = new Body("Idle");
         this._modeText = new egret.TextField();
         this._stateMachine = new StateMachine();
 
@@ -228,7 +249,7 @@ class Player extends egret.DisplayObjectContainer {
         this.addChild(this._body);
         this.addChild(this._modeText);
 
-        this._body.gotoAndPlay("idle", -1);
+        //this._body.gotoAndPlay("idle", -1);
     }
 
     move(targetX: number, targetY: number) {
@@ -285,7 +306,9 @@ class PlayerMoveState extends PlayerState {
     }
     onEnter() {
         this._player._modeText.text = "Now is moving";
-        this._player._body.gotoAndPlay("run", -1);
+        //var body = new Body("Move");
+        //this._player._body.gotoAndPlay("run", -1);
+        //this._player._body = body;
         var tw = egret.Tween.get(this._player._body);
         tw.to({ x: this._targetX, y: this._targetY }, 500).call(this._player.idle, this._player);
     }
@@ -294,7 +317,9 @@ class PlayerMoveState extends PlayerState {
 class PlayerIdleState extends PlayerState {
 
     onEnter() {
-        this._player._body.gotoAndPlay("idle");
+        //this._player._body.gotoAndPlay("idle");
+       // var body = new Body("Idle");
+        //this._player._body = body;
         this._player._modeText.text = "Now is idling";
     }
 }
