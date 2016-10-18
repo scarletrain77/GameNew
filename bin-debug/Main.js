@@ -101,7 +101,6 @@ var Main = (function (_super) {
      * Create a game scene
      */
     p.createGameScene = function () {
-        //////////////Please don't copy all of my codes completely--ScarletRain77///////////////
         var sky = this.createBitmapByName("bg_jpg");
         this.addChild(sky);
         var stageW = this.stage.stageWidth;
@@ -193,6 +192,7 @@ var Body = (function (_super) {
     p.onEnterFrame = function (e) {
         //帧数大于0的时候，才能移除前一帧
         //当帧数为0的时候，移除的是最后一帧
+        //第一次播放的时候，第0帧前面没有要移除的第7帧
         if (this.mode == "Idle") {
             if (this.frameNumber >= 1) {
                 this.removeChild(this.dogIdleArray[this.frameNumber - 1]);
