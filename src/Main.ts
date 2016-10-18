@@ -126,12 +126,11 @@ class Main extends egret.DisplayObjectContainer {
         sky.width = stageW;
         sky.height = stageH;
         var player = new Player();
+        //player.idle();
         this.addChild(player);
         sky.touchEnabled = true;
-        //player.idle();
         sky.addEventListener(egret.TouchEvent.TOUCH_END, (e) => {
-            player.move(e.stageX - 50, e.stageY - 50);
-            //console.log("X:" + e.stageX + "Y:" + e.stageY);
+            player.move(e.stageX, e.stageY);
         }, this);
 
        
@@ -154,8 +153,7 @@ class Main extends egret.DisplayObjectContainer {
 
 
 class Player extends egret.DisplayObjectContainer {
-    _label: egret.TextField;
-    //_body: egret.Shape;
+    _modeText: egret.TextField;
     _body:egret.MovieClip;
     _stateMachine: StateMachine;
     
@@ -167,19 +165,16 @@ class Player extends egret.DisplayObjectContainer {
         var mcFactory: egret.MovieClipDataFactory = new egret.MovieClipDataFactory(data, txtr);
         
         this._body = new egret.MovieClip( mcFactory.generateMovieClipData( "dog" ) );
-        this._label = new egret.TextField();
+        this._modeText = new egret.TextField();
         this._stateMachine = new StateMachine();
-        this._label.y = 30;
-        this._label.text = "Player";
-       // this._body = new egret.Shape();
-        //this._body.graphics.beginFill(0xff000, 1);
-        //this._body.graphics.drawCircle(50, 50, 50);
-        //this._body.graphics.endFill();
 
+        this._modeText.y = 30;
+        this._modeText.text = "Now is playing";
+     
         this.addChild(this._body);
-        this.addChild(this._label);
+        this.addChild(this._modeText);
 
-        this._body.gotoAndPlay("idle",100);
+        this._body.gotoAndPlay("idle", -1);
     }
 
     move(targetX: number, targetY: number) {
@@ -200,7 +195,6 @@ class StateMachine {
         if (this._currentState) {
             this._currentState.onExit();
         }
-        //s.stateMachine = this;
         this._currentState = s;
         this._currentState.onEnter();
     }
@@ -210,7 +204,6 @@ class StateMachine {
  * 状态接口，有两个方法。
  */
 interface State {
-    //stateMachine:StateMachine;
     onEnter();
     onExit();
 }
@@ -219,7 +212,6 @@ interface State {
  * 实现状态。_player为目前的人物，
  */
 class PlayerState implements State {
-    //stateMachine:StateMachine;
     _player: Player;
     constructor(player: Player) {
         this._player = player;
@@ -238,12 +230,10 @@ class PlayerMoveState extends PlayerState {
         this._targetY = targetY;
     }
     onEnter() {
-        this._player._label.text = "move";
-        this._player._body.gotoAndPlay("run");
-        //console.log(this._player._body.x);
+        this._player._modeText.text = "Now is moving";
+        this._player._body.gotoAndPlay("run", -1);
         var tw = egret.Tween.get(this._player._body);
         tw.to({ x: this._targetX, y: this._targetY }, 500).call(this._player.idle, this._player);
-        //this._player.idle();
     }
 }
 
@@ -251,11 +241,6 @@ class PlayerIdleState extends PlayerState {
 
     onEnter() {
         this._player._body.gotoAndPlay("idle");
-        this._player._label.text = "idle";
-        //if (this._targetX == this._player._body.x)
-          //  this._player.move(this._targetX, this._targetY);
-        /*egret.setTimeout(()=>{
-            this._player.move();
-        }, this, 5000);*/
+        this._player._modeText.text = "Now is idling";
     }
 }
