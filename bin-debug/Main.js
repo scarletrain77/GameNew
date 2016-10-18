@@ -138,9 +138,9 @@ var Body = (function (_super) {
         this.timeOnEnterFrame = 0;
         //目前所在的帧数，idle一共8帧，即帧数为0-7
         this.frameNumber = 0;
-        //播放次数
+        //是不是第一次播放
         this.isPlayFirst = true;
-        //
+        //判断状态切换前的是Run状态还是Idle状态
         this.isRunChild = false;
         this.isIdleChild = false;
         //两个动画的播放起始和结束帧
@@ -200,7 +200,6 @@ var Body = (function (_super) {
             else if (this.frameNumber == 0 && this.isPlayFirst == false) {
                 this.removeChild(this.dogIdleArray[this.idleAnimFrameEnd]);
             }
-            this.isIdleChild = false;
             this.addChild(this.dogIdleArray[this.frameNumber]);
             this.isIdleChild = true;
             this.frameNumber++;
@@ -218,7 +217,6 @@ var Body = (function (_super) {
             else if (this.frameNumber == 0 && this.isPlayFirst == false) {
                 this.removeChild(this.dogRunArray[this.runAnimFrameEnd]);
             }
-            this.isRunChild = false;
             this.addChild(this.dogRunArray[this.frameNumber]);
             this.isRunChild = true;
             this.frameNumber++;
