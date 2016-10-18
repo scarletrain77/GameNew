@@ -117,24 +117,35 @@ class Main extends egret.DisplayObjectContainer {
      */
     private createGameScene(): void {
         //////////////Please don't copy all of my codes completely--ScarletRain77///////////////
-
-
         var sky: egret.Bitmap = this.createBitmapByName("bg_jpg");
         this.addChild(sky);
         var stageW: number = this.stage.stageWidth;
         var stageH: number = this.stage.stageHeight;
         sky.width = stageW;
         sky.height = stageH;
+
+        var body = new Body();
+        this.addChild(body);
+
+        var timer: egret.Timer = new egret.Timer(500);
+
+        //var dog02:egret.Bitmap = this.createBitmapByName("dog02_png");
+        //var dog02:egret.Bitmap = this.createBitmapByName("dog02_png");
+        //var dog02:egret.Bitmap = this.createBitmapByName("dog02_png");
+
+
+
         var player = new Player();
         //player.idle();
-        this.addChild(player);
+        // this.addChild(player);
+
         sky.touchEnabled = true;
         sky.addEventListener(egret.TouchEvent.TOUCH_END, (e) => {
             player.move(e.stageX, e.stageY);
         }, this);
 
-       
-       
+
+
         //根据name关键字，异步获取一个json配置文件，name属性请参考resources/resource.json配置文件的内容。
         // Get asynchronously a json configuration file according to name keyword. As for the property of name please refer to the configuration file of resources/resource.json
     }
@@ -151,26 +162,69 @@ class Main extends egret.DisplayObjectContainer {
     }
 }
 
+class Body extends egret.DisplayObjectContainer {
+    private dogArray: egret.Bitmap[];
+    private timeOnEnterFrame: number = 0;
+    //目前所在的帧数，idle一共8帧，即帧数为0-7
+    private frameNumber = 0;
+
+    public constructor() {
+        super();
+        var dog01: egret.Bitmap = new egret.Bitmap(RES.getRes("dog01_png"));
+        var dog02: egret.Bitmap = new egret.Bitmap(RES.getRes("dog02_png"));
+        var dog03: egret.Bitmap = new egret.Bitmap(RES.getRes("dog03_png"));
+        var dog04: egret.Bitmap = new egret.Bitmap(RES.getRes("dog04_png"));
+        var dog05: egret.Bitmap = new egret.Bitmap(RES.getRes("dog05_png"));
+        var dog06: egret.Bitmap = new egret.Bitmap(RES.getRes("dog06_png"));
+        var dog07: egret.Bitmap = new egret.Bitmap(RES.getRes("dog07_png"));
+        var dog08: egret.Bitmap = new egret.Bitmap(RES.getRes("dog08_png"));
+        this.dogArray = [dog01, dog02, dog03, dog04, dog05, dog06, dog07, dog08];
+        this.once(egret.Event.ADDED_TO_STAGE, this.onLoad, this);        
+    }
+
+    private onLoad(event: egret.Event) {
+        this.addEventListener(egret.Event.ENTER_FRAME, this.onEnterFrame, this);
+        this.timeOnEnterFrame = egret.getTimer();
+    }
+    private onEnterFrame(e: egret.Event) {
+       // var now = egret.getTimer();
+        //var time = this.timeOnEnterFrame;
+       // var pass = now - time;
+        //console.log("onEnterFrame: ", (1000 / pass).toFixed(5));
+        //if (pass == 200) {
+            if (this.frameNumber >= 1) {
+                this.removeChild(this.dogArray[this.frameNumber - 1]);
+            }
+            this.addChild(this.dogArray[this.frameNumber]);
+            this.frameNumber++;
+            if(this.frameNumber == 8){
+                this.frameNumber = 0;
+            }
+        //}
+        this.timeOnEnterFrame = egret.getTimer();
+    }
+
+}
 
 class Player extends egret.DisplayObjectContainer {
     _modeText: egret.TextField;
-    _body:egret.MovieClip;
+    _body: egret.MovieClip;
     _stateMachine: StateMachine;
-    
+
 
     constructor() {
         super();
         var data = RES.getRes("dog_json");
         var txtr = RES.getRes("dog_png");
         var mcFactory: egret.MovieClipDataFactory = new egret.MovieClipDataFactory(data, txtr);
-        
-        this._body = new egret.MovieClip( mcFactory.generateMovieClipData( "dog" ) );
+
+        this._body = new egret.MovieClip(mcFactory.generateMovieClipData("dog"));
         this._modeText = new egret.TextField();
         this._stateMachine = new StateMachine();
 
         this._modeText.y = 30;
         this._modeText.text = "Now is playing";
-     
+
         this.addChild(this._body);
         this.addChild(this._modeText);
 
@@ -217,8 +271,8 @@ class PlayerState implements State {
         this._player = player;
     }
 
-    onEnter() {}
-    onExit() {}
+    onEnter() { }
+    onExit() { }
 }
 
 class PlayerMoveState extends PlayerState {

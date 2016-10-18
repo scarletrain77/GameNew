@@ -108,9 +108,15 @@ var Main = (function (_super) {
         var stageH = this.stage.stageHeight;
         sky.width = stageW;
         sky.height = stageH;
+        var body = new Body();
+        this.addChild(body);
+        var timer = new egret.Timer(500);
+        //var dog02:egret.Bitmap = this.createBitmapByName("dog02_png");
+        //var dog02:egret.Bitmap = this.createBitmapByName("dog02_png");
+        //var dog02:egret.Bitmap = this.createBitmapByName("dog02_png");
         var player = new Player();
         //player.idle();
-        this.addChild(player);
+        // this.addChild(player);
         sky.touchEnabled = true;
         sky.addEventListener(egret.TouchEvent.TOUCH_END, function (e) {
             player.move(e.stageX, e.stageY);
@@ -131,6 +137,49 @@ var Main = (function (_super) {
     return Main;
 }(egret.DisplayObjectContainer));
 egret.registerClass(Main,'Main');
+var Body = (function (_super) {
+    __extends(Body, _super);
+    function Body() {
+        _super.call(this);
+        this.timeOnEnterFrame = 0;
+        //目前所在的帧数，idle一共8帧，即帧数为0-7
+        this.frameNumber = 0;
+        var dog01 = new egret.Bitmap(RES.getRes("dog01_png"));
+        var dog02 = new egret.Bitmap(RES.getRes("dog02_png"));
+        var dog03 = new egret.Bitmap(RES.getRes("dog03_png"));
+        var dog04 = new egret.Bitmap(RES.getRes("dog04_png"));
+        var dog05 = new egret.Bitmap(RES.getRes("dog05_png"));
+        var dog06 = new egret.Bitmap(RES.getRes("dog06_png"));
+        var dog07 = new egret.Bitmap(RES.getRes("dog07_png"));
+        var dog08 = new egret.Bitmap(RES.getRes("dog08_png"));
+        this.dogArray = [dog01, dog02, dog03, dog04, dog05, dog06, dog07, dog08];
+        this.once(egret.Event.ADDED_TO_STAGE, this.onLoad, this);
+    }
+    var d = __define,c=Body,p=c.prototype;
+    p.onLoad = function (event) {
+        this.addEventListener(egret.Event.ENTER_FRAME, this.onEnterFrame, this);
+        this.timeOnEnterFrame = egret.getTimer();
+    };
+    p.onEnterFrame = function (e) {
+        // var now = egret.getTimer();
+        //var time = this.timeOnEnterFrame;
+        // var pass = now - time;
+        //console.log("onEnterFrame: ", (1000 / pass).toFixed(5));
+        //if (pass == 200) {
+        if (this.frameNumber >= 1) {
+            this.removeChild(this.dogArray[this.frameNumber - 1]);
+        }
+        this.addChild(this.dogArray[this.frameNumber]);
+        this.frameNumber++;
+        if (this.frameNumber == 8) {
+            this.frameNumber = 0;
+        }
+        //}
+        this.timeOnEnterFrame = egret.getTimer();
+    };
+    return Body;
+}(egret.DisplayObjectContainer));
+egret.registerClass(Body,'Body');
 var Player = (function (_super) {
     __extends(Player, _super);
     function Player() {
@@ -197,7 +246,7 @@ var PlayerMoveState = (function (_super) {
     var d = __define,c=PlayerMoveState,p=c.prototype;
     p.onEnter = function () {
         this._player._modeText.text = "Now is moving";
-        this._player._body.gotoAndPlay("run");
+        this._player._body.gotoAndPlay("run", -1);
         var tw = egret.Tween.get(this._player._body);
         tw.to({ x: this._targetX, y: this._targetY }, 500).call(this._player.idle, this._player);
     };

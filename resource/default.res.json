@@ -1,7 +1,7 @@
 {
 	"groups": [
 		{
-			"keys": "bg_jpg,egret_icon_png,description_json,dog_json,dog_png",
+			"keys": "bg_jpg,egret_icon_png,description_json,dog_json,dog_png,dog16_png,dog01_png,dog02_png,dog03_png,dog04_png,dog05_png,dog06_png,dog07_png,dog08_png,dog09_png,dog10_png,dog11_png,dog12_png,dog13_png,dog14_png,dog15_png",
 			"name": "preload"
 		}
 	],
@@ -30,6 +30,86 @@
 			"name": "dog_png",
 			"type": "image",
 			"url": "assets/dog.png"
+		},
+		{
+			"name": "dog16_png",
+			"type": "image",
+			"url": "assets/dog16.png"
+		},
+		{
+			"name": "dog01_png",
+			"type": "image",
+			"url": "assets/dog01.png"
+		},
+		{
+			"name": "dog02_png",
+			"type": "image",
+			"url": "assets/dog02.png"
+		},
+		{
+			"name": "dog03_png",
+			"type": "image",
+			"url": "assets/dog03.png"
+		},
+		{
+			"name": "dog04_png",
+			"type": "image",
+			"url": "assets/dog04.png"
+		},
+		{
+			"name": "dog05_png",
+			"type": "image",
+			"url": "assets/dog05.png"
+		},
+		{
+			"name": "dog06_png",
+			"type": "image",
+			"url": "assets/dog06.png"
+		},
+		{
+			"name": "dog07_png",
+			"type": "image",
+			"url": "assets/dog07.png"
+		},
+		{
+			"name": "dog08_png",
+			"type": "image",
+			"url": "assets/dog08.png"
+		},
+		{
+			"name": "dog09_png",
+			"type": "image",
+			"url": "assets/dog09.png"
+		},
+		{
+			"name": "dog10_png",
+			"type": "image",
+			"url": "assets/dog10.png"
+		},
+		{
+			"name": "dog11_png",
+			"type": "image",
+			"url": "assets/dog11.png"
+		},
+		{
+			"name": "dog12_png",
+			"type": "image",
+			"url": "assets/dog12.png"
+		},
+		{
+			"name": "dog13_png",
+			"type": "image",
+			"url": "assets/dog13.png"
+		},
+		{
+			"name": "dog14_png",
+			"type": "image",
+			"url": "assets/dog14.png"
+		},
+		{
+			"name": "dog15_png",
+			"type": "image",
+			"url": "assets/dog15.png"
 		}
 	]
 }
