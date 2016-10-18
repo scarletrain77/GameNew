@@ -167,6 +167,8 @@ class Body extends egret.DisplayObjectContainer {
     private timeOnEnterFrame: number = 0;
     //目前所在的帧数，idle一共8帧，即帧数为0-7
     private frameNumber = 0;
+    //播放次数
+    private isPlayFirst = true;
 
     public constructor() {
         super();
@@ -179,7 +181,7 @@ class Body extends egret.DisplayObjectContainer {
         var dog07: egret.Bitmap = new egret.Bitmap(RES.getRes("dog07_png"));
         var dog08: egret.Bitmap = new egret.Bitmap(RES.getRes("dog08_png"));
         this.dogArray = [dog01, dog02, dog03, dog04, dog05, dog06, dog07, dog08];
-        this.once(egret.Event.ADDED_TO_STAGE, this.onLoad, this);        
+        this.once(egret.Event.ADDED_TO_STAGE, this.onLoad, this);
     }
 
     private onLoad(event: egret.Event) {
@@ -187,20 +189,18 @@ class Body extends egret.DisplayObjectContainer {
         this.timeOnEnterFrame = egret.getTimer();
     }
     private onEnterFrame(e: egret.Event) {
-       // var now = egret.getTimer();
-        //var time = this.timeOnEnterFrame;
-       // var pass = now - time;
-        //console.log("onEnterFrame: ", (1000 / pass).toFixed(5));
-        //if (pass == 200) {
-            if (this.frameNumber >= 1) {
-                this.removeChild(this.dogArray[this.frameNumber - 1]);
-            }
-            this.addChild(this.dogArray[this.frameNumber]);
-            this.frameNumber++;
-            if(this.frameNumber == 8){
-                this.frameNumber = 0;
-            }
-        //}
+        if (this.frameNumber >= 1) {
+            this.removeChild(this.dogArray[this.frameNumber - 1]);
+        } else if (this.frameNumber == 0 && this.isPlayFirst == false) {
+            this.removeChild(this.dogArray[7]);
+        }
+        this.addChild(this.dogArray[this.frameNumber]);
+        this.frameNumber++;
+        if (this.frameNumber == 8) {
+            this.frameNumber = 0;
+        }
+        this.isPlayFirst = false;
+
         this.timeOnEnterFrame = egret.getTimer();
     }
 

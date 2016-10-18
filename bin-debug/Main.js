@@ -144,6 +144,8 @@ var Body = (function (_super) {
         this.timeOnEnterFrame = 0;
         //目前所在的帧数，idle一共8帧，即帧数为0-7
         this.frameNumber = 0;
+        //播放次数
+        this.isPlayFirst = true;
         var dog01 = new egret.Bitmap(RES.getRes("dog01_png"));
         var dog02 = new egret.Bitmap(RES.getRes("dog02_png"));
         var dog03 = new egret.Bitmap(RES.getRes("dog03_png"));
@@ -169,11 +171,15 @@ var Body = (function (_super) {
         if (this.frameNumber >= 1) {
             this.removeChild(this.dogArray[this.frameNumber - 1]);
         }
+        else if (this.frameNumber == 0 && this.isPlayFirst == false) {
+            this.removeChild(this.dogArray[7]);
+        }
         this.addChild(this.dogArray[this.frameNumber]);
         this.frameNumber++;
         if (this.frameNumber == 8) {
             this.frameNumber = 0;
         }
+        this.isPlayFirst = false;
         //}
         this.timeOnEnterFrame = egret.getTimer();
     };
