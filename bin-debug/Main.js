@@ -140,6 +140,9 @@ var Body = (function (_super) {
         this.frameNumber = 0;
         //播放次数
         this.isPlayFirst = true;
+        //
+        this.isRunChild = false;
+        this.isIdleChild = false;
         //两个动画的播放起始和结束帧
         this.idleAnimFrameEnd = 7;
         this.runAnimFrameEnd = 7;
@@ -167,8 +170,21 @@ var Body = (function (_super) {
     }
     var d = __define,c=Body,p=c.prototype;
     p.reset = function () {
-        this.frameNumber = 0;
         this.isPlayFirst = true;
+        if (this.frameNumber == 0) {
+            this.frameNumber = 8;
+        }
+        if (this.isIdleChild == true) {
+            this.removeChild(this.dogIdleArray[this.frameNumber - 1]);
+            console.log("remove idle" + this.frameNumber);
+        }
+        else if (this.isRunChild == true) {
+            this.removeChild(this.dogRunArray[this.frameNumber - 1]);
+            console.log("remove run" + this.frameNumber);
+        }
+        this.isIdleChild = false;
+        this.isRunChild = false;
+        this.frameNumber = 0;
     };
     p.onLoad = function (event) {
         this.addEventListener(egret.Event.ENTER_FRAME, this.onEnterFrame, this);
@@ -184,7 +200,9 @@ var Body = (function (_super) {
             else if (this.frameNumber == 0 && this.isPlayFirst == false) {
                 this.removeChild(this.dogIdleArray[this.idleAnimFrameEnd]);
             }
+            this.isIdleChild = false;
             this.addChild(this.dogIdleArray[this.frameNumber]);
+            this.isIdleChild = true;
             this.frameNumber++;
             if (this.frameNumber == 8) {
                 this.frameNumber = 0;
@@ -193,13 +211,16 @@ var Body = (function (_super) {
             this.timeOnEnterFrame = egret.getTimer();
         }
         else if (this.mode == "Run") {
+            //console.log("Run:"+this.frameNumber);
             if (this.frameNumber >= 1) {
                 this.removeChild(this.dogRunArray[this.frameNumber - 1]);
             }
             else if (this.frameNumber == 0 && this.isPlayFirst == false) {
                 this.removeChild(this.dogRunArray[this.runAnimFrameEnd]);
             }
+            this.isRunChild = false;
             this.addChild(this.dogRunArray[this.frameNumber]);
+            this.isRunChild = true;
             this.frameNumber++;
             if (this.frameNumber == 8) {
                 this.frameNumber = 0;
